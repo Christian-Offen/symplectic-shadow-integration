@@ -4,7 +4,8 @@ This is accompanying code to the article
 
 	Symplectic integration of learned Hamiltonian systems
 	Christian Offen, Sina Ober-Blöbaum
-	Status: Preprint.
+	[arXiv:2108.02492](https://arxiv.org/abs/2108.02492)
+	Status: Submitted.
 
 Please find the paper and citation information on [ArXiv](https://arxiv.org/a/offen_c_1.html) or the [author's homepage](https://www.uni-paderborn.de/en/person/85279).
 
