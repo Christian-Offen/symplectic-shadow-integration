@@ -3,3 +3,4 @@ scipy==1.6.3
 scikit_optimize==0.8.1
 scikit_learn==0.24.2
 matplotlib==3.4.2
+tqdm==4.60.0

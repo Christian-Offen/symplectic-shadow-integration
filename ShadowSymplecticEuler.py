@@ -1,5 +1,8 @@
 import numpy as np
+import pickle
+from datetime import datetime
 from scipy.linalg import cho_factor, cho_solve
+from tqdm import tqdm
 
 class ShadowSEuler():
 	
@@ -35,16 +38,20 @@ class ShadowSEuler():
 
 
 
-	def classicTrajectory(self,z,f1,f2,h,N=1,verbose=False):
+	def classicTrajectory(self,z,f1,f2,h,N=1,verbose=False, saveflag=False, saveint=1000):
 	## trajectory computed with classicInt
 	
-		trj = np.zeros((len(z),N+1))
-		trj[:,0] = z.copy()
+		self.trj = np.zeros((len(z),N+1))
+		self.trj[:,0] = z.copy()
 
-		for j in range(0,N):
-			trj[:,j+1] = self.classicInt(trj[:,j].copy(),f1,f2,h,verbose)
+		for j in tqdm(range(0,N)):
+			self.trj[:,j+1] = self.classicInt(self.trj[:,j].copy(),f1,f2,h,verbose)
 		
-		return trj
+			if (saveflag==True and (j+1) % saveint == 0):
+				timedata = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+				pickle.dump(self.trj[:,:j+1],open('SSIdata_'+str(j)+'_'+timedata+'.pkl','wb'))
+		
+		return self.trj
 		
 		
 	def train(self,trainin, trainout, h, k=False, dk=False, ddk=False, x0=0, H0=0, sigma=1e-13):
@@ -149,7 +156,7 @@ class ShadowSEuler():
 		return np.array(ddkX).transpose() @ self.KinvH  # Hessian H
 
 	
-	def predictMotion(self,z0,N,verbose=False):
+	def predictMotion(self,z0,N,verbose=False,saveflag=False, saveint=1000):
 	# apply classical integrator to inverse modified vector field
 
 		dim = int(len(z0)/2)
@@ -158,7 +165,7 @@ class ShadowSEuler():
 		f2 = lambda z: (self.Jinv @ self.invmoddH(z))[dim:]
 		
 		
-		return self.classicTrajectory(z0,f1,f2,self.h,N,verbose)
+		return self.classicTrajectory(z0,f1,f2,self.h,N,verbose=verbose,saveflag=saveflag, saveint=saveint)
 		
 		
 	def HRecover(self,x):
